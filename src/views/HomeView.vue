@@ -1,5 +1,146 @@
 <template>
-  <div></div>
+  <div class="home">
+    <el-container>
+      <el-aside width="12em" class="aside">
+        <el-menu
+          mode="vertical"
+          router
+          unique-opened
+          :default-active="defaultActive"
+          class="aside-menu"
+          background-color="#242327"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+        >
+          <div class="aside-logo">
+            <img class="logo" src="../assets/logo.svg" alt="logo" />
+          </div>
+          <el-menu-item class="aside-menu-item" index="/">
+            <el-icon><Odometer /></el-icon>
+            <span>首 页</span>
+          </el-menu-item>
+          <el-menu-item class="aside-menu-item" index="/user">
+            <el-icon><User /></el-icon>
+            <span>用 户</span>
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+      <el-container>
+        <el-header class="header" height="4em">
+          <div class="header-tool"></div>
+        </el-header>
+        <el-main class="main-view">
+          <RouterView />
+        </el-main>
+        <el-footer height="2em" class="footer">
+          <span class="footer-text">Footer</span>
+        </el-footer>
+      </el-container>
+    </el-container>
+    <div class="header-menu">
+      <div class="header-menu-item">
+        <span class="header-menu-item-user">UNAME</span>
+        <el-button class="header-menu-item-button"
+          ><el-icon><Avatar /></el-icon
+        ></el-button>
+        <el-button class="header-menu-item-button" type="danger">登出</el-button>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const defaultActive = computed(() => route.path)
+</script>
+
+<style>
+.blank1 {
+  height: 1em;
+}
+
+.aside {
+  max-width: 12em;
+  height: 100%;
+  overflow-x: hidden;
+  z-index: 1;
+}
+
+.aside-menu {
+  height: 100vh;
+  border-right: none;
+}
+
+.el-menu-item.is-active {
+  background-color: #393a3e !important;
+}
+
+.aside-menu-item {
+  text-align: left;
+}
+
+.aside-submenu-item {
+  text-align: center;
+}
+
+.aside-logo {
+  max-width: 12em;
+  display: grid;
+}
+
+.logo {
+  width: 5em;
+  margin: auto;
+}
+
+.main-view {
+  margin-top: 4.5em;
+  padding: 2em;
+}
+
+.header {
+  width: 100%;
+  padding: 0;
+}
+
+.header-tool {
+  background-color: #242327;
+  height: 4em;
+}
+
+.header-menu {
+  height: 4.5em;
+  line-height: 4.5em;
+  position: absolute;
+  top: 0;
+  right: 1em;
+  z-index: 999;
+}
+
+.header-menu-item-user {
+  height: 4.5em;
+  line-height: 4.5em;
+  font-weight: bold;
+  color: #fff;
+}
+
+.header-menu-item-button {
+  line-height: 4.5em;
+  margin-left: 1em;
+}
+
+.footer {
+  text-align: center;
+}
+
+.footer-text {
+  color: #909399;
+  height: 2em;
+  line-height: 2em;
+}
+</style>
