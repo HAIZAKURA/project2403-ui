@@ -19,7 +19,7 @@
             <el-icon><Odometer /></el-icon>
             <span>首 页</span>
           </el-menu-item>
-          <el-menu-item class="aside-menu-item" index="/user">
+          <el-menu-item v-if="user.role == 1" class="aside-menu-item" index="/user">
             <el-icon><User /></el-icon>
             <span>用 户</span>
           </el-menu-item>
@@ -39,11 +39,11 @@
     </el-container>
     <div class="header-menu">
       <div class="header-menu-item">
-        <span class="header-menu-item-user">UNAME</span>
+        <span class="header-menu-item-user">{{ user.username }}</span>
         <el-button class="header-menu-item-button"
           ><el-icon><Avatar /></el-icon
         ></el-button>
-        <el-button class="header-menu-item-button" type="danger">登出</el-button>
+        <el-button class="header-menu-item-button" type="danger" @click="onLogout">登出</el-button>
       </div>
     </div>
   </div>
@@ -51,12 +51,53 @@
 
 <script setup>
 import { RouterView } from 'vue-router'
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { refreshToken } from '@/api/user'
+import { ElMessage } from 'element-plus'
 
-const route = useRoute()
+const user = reactive({
+  uid: localStorage.getItem('uid'),
+  role: localStorage.getItem('role'),
+  username: localStorage.getItem('username'),
+})
 
-const defaultActive = computed(() => route.path)
+const router = useRouter()
+
+const defaultActive = computed(() => router.path)
+
+const onLogout = () => {
+  ElMessage.success('登出成功')
+  localStorage.clear()
+  router.push('/login')
+}
+
+const refreshJWT = () => {
+  refreshToken()
+    .then((res) => {
+      if (res.data.code == 200) {
+        localStorage.setItem('uid', res.data.data.uid)
+        localStorage.setItem('role', res.data.data.role)
+        localStorage.setItem('username', res.data.data.username)
+        localStorage.setItem('token', res.data.token)
+      } else if (res.data.code == 401) {
+        ElMessage.error('用户未登录')
+        localStorage.clear()
+        router.push('/login')
+      } else {
+        ElMessage.error('未知错误')
+        localStorage.clear()
+        router.push('/login')
+      }
+    })
+    .catch((err) => {
+      ElMessage.error('Error:', err)
+    })
+}
+
+onMounted(() => {
+  refreshJWT()
+})
 </script>
 
 <style>
