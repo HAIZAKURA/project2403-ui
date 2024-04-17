@@ -6,7 +6,7 @@
           mode="vertical"
           router
           unique-opened
-          :default-active="defaultActive"
+          :default-active="activePath"
           class="aside-menu"
           background-color="#242327"
           text-color="#fff"
@@ -40,21 +40,41 @@
     <div class="header-menu">
       <div class="header-menu-item">
         <span class="header-menu-item-user">{{ user.username }}</span>
-        <el-button class="header-menu-item-button"
-          ><el-icon><Avatar /></el-icon
-        ></el-button>
+        <el-button class="header-menu-item-button" @click="myDialogVisible = true"><el-icon><Key /></el-icon></el-button>
         <el-button class="header-menu-item-button" type="danger" @click="onLogout">登出</el-button>
       </div>
     </div>
   </div>
+
+  <el-dialog v-model="myDialogVisible" :before-close="onMyDialogClose" title="修改密码" width="30%">
+    <el-form :model="renewPassForm" label-width="80px" label-position="left">
+      <el-form-item label="旧密码">
+        <el-input v-model="renewPassForm.password" type="password" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="新密码">
+        <el-input v-model="renewPassForm.new_password" type="password" autocomplete="off" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onRenewPass">确认</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router'
-import { computed, onMounted, reactive } from 'vue'
+import { onMounted, reactive, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { refreshToken } from '@/api/user'
+import { refreshToken, renewPass } from '@/api/user'
 import { ElMessage } from 'element-plus'
+
+const myDialogVisible = ref(false)
+
+const renewPassForm = reactive({
+  password: '',
+  new_password: ''
+})
 
 const user = reactive({
   uid: localStorage.getItem('uid'),
@@ -64,34 +84,80 @@ const user = reactive({
 
 const router = useRouter()
 
-const defaultActive = computed(() => router.path)
+router.beforeEach((to, from, next) => {
+  sessionStorage.setItem('activePath', to.path)
+  next();
+});
 
+const activePath = computed(() => {
+  return sessionStorage.getItem('activePath') || '/'
+})
+
+/**
+ * 登出功能实现。
+ * 清除本地存储并重定向到登录页。
+ */
 const onLogout = () => {
   ElMessage.success('登出成功')
-  localStorage.clear()
-  router.push('/login')
+  localStorage.clear() // 清除本地存储
+  router.push('/login') // 重定向到登录页
 }
 
-const refreshJWT = () => {
-  refreshToken()
+/**
+ * 重置密码功能实现。
+ * 根据用户ID和新密码表单数据提交密码重置请求。
+ */
+const onRenewPass = () => {
+  console.log(user.uid, renewPassForm)
+  renewPass(user.uid, renewPassForm) // 提交密码重置请求
     .then((res) => {
-      if (res.data.code == 200) {
-        localStorage.setItem('uid', res.data.data.uid)
-        localStorage.setItem('role', res.data.data.role)
-        localStorage.setItem('username', res.data.data.username)
-        localStorage.setItem('token', res.data.token)
-      } else if (res.data.code == 401) {
-        ElMessage.error('用户未登录')
-        localStorage.clear()
-        router.push('/login')
-      } else {
-        ElMessage.error('未知错误')
-        localStorage.clear()
-        router.push('/login')
+      if (res.data.code == 200) { // 密码重置成功
+        ElMessage.success('密码重置成功')
+        localStorage.clear() // 清除本地存储
+        router.push('/login') // 重定向到登录页
+      } else { // 密码重置失败
+        ElMessage.error('密码重置失败')
       }
     })
     .catch((err) => {
-      ElMessage.error('Error:', err)
+      ElMessage.error('Error:', err) // 处理请求错误
+    })
+}
+
+/**
+ * 对话框关闭时的处理逻辑。
+ * 重置密码表单数据并隐藏对话框。
+ */
+const onMyDialogClose = () => {
+  renewPassForm.password = '' // 重置密码字段
+  renewPassForm.new_password = '' // 重置新密码字段
+  myDialogVisible.value = false // 隐藏对话框
+}
+
+/**
+ * 刷新JWT Token。
+ * 请求新的JWT Token并更新本地存储。
+ */
+const refreshJWT = () => {
+  refreshToken() // 请求新的JWT Token
+    .then((res) => {
+      if (res.data.code == 200) { // Token刷新成功
+        localStorage.setItem('uid', res.data.data.uid) // 存储用户ID
+        localStorage.setItem('role', res.data.data.role) // 存储用户角色
+        localStorage.setItem('username', res.data.data.username) // 存储用户名
+        localStorage.setItem('token', res.data.token) // 存储Token
+      } else if (res.data.code == 401) { // 用户未登录
+        ElMessage.error('用户未登录')
+        localStorage.clear() // 清除本地存储
+        router.push('/login') // 重定向到登录页
+      } else { // 未知错误
+        ElMessage.error('未知错误')
+        localStorage.clear() // 清除本地存储
+        router.push('/login') // 重定向到登录页
+      }
+    })
+    .catch((err) => {
+      ElMessage.error('Error:', err) // 处理请求错误
     })
 }
 
