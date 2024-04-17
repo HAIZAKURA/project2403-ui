@@ -40,7 +40,7 @@
     <div class="header-menu">
       <div class="header-menu-item">
         <span class="header-menu-item-user">{{ user.username }}</span>
-        <el-button class="header-menu-item-button" @click="myDialogVisible = true"><el-icon><Key /></el-icon></el-button>
+        <el-button class="header-menu-item-button" @click="myDialogVisible = true" circle><el-icon><Key /></el-icon></el-button>
         <el-button class="header-menu-item-button" type="danger" @click="onLogout">登出</el-button>
       </div>
     </div>
