@@ -36,9 +36,7 @@
                 </el-form-item>
                 <!-- 登录按钮，点击触发 onSubmit 事件 -->
                 <el-form-item>
-                  <el-button type="primary" class="button-center" size="large" @click="onSubmit"
-                    >登 录</el-button
-                  >
+                  <el-button type="primary" class="button-center" size="large" @click="onSubmit">登 录</el-button>
                 </el-form-item>
               </el-form>
             </el-card>
