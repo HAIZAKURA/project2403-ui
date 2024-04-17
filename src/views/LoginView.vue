@@ -55,6 +55,9 @@ import { reactive, ref } from 'vue'
 import { userLogin } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import Vcode from 'vue3-puzzle-vcode'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const isShow = ref(false)
 
@@ -72,7 +75,11 @@ const onSuccess = () => {
     .then((res) => {
       if (res.data.code == 200) {
         ElMessage.success('登录成功')
-        console.log(res.data.data)
+        localStorage.setItem('uid', res.data.data.uid)
+        localStorage.setItem('role', res.data.data.role)
+        localStorage.setItem('username', res.data.data.username)
+        localStorage.setItem('token', res.data.token)
+        router.push('/')
       } else if (res.data.code == 401) {
         ElMessage.error('用户名或密码错误')
       } else {
