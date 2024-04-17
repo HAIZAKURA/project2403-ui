@@ -8,22 +8,20 @@ import request from '@/utils/request'
 export function userLogin(LoginDTO) {
   // 发送登录请求
   return request({
-    url: '/api/user/login',
+    url: '/api/login',
     method: 'post',
     data: LoginDTO
   })
 }
 
 /**
- * 用户登出功能
- * 本函数用于向服务器发送登出请求，完成用户登出操作。
- *
- * @returns {Promise} 返回一个Promise对象，成功时返回登出操作的结果，失败时返回错误信息。
+ * 刷新令牌
+ * @returns {Promise} 返回一个Promise对象，成功时携带刷新后的令牌信息，失败时携带错误信息。
  */
-export function userLogout() {
-  // 发送登出请求
+export function refreshToken() {
+  // 向指定URL发送GET请求以刷新令牌
   return request({
-    url: '/api/user/logout',
+    url: '/api/refresh',
     method: 'get'
   })
 }
