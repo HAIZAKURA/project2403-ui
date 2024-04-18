@@ -19,6 +19,10 @@
             <el-icon><Odometer /></el-icon>
             <span>首 页</span>
           </el-menu-item>
+          <el-menu-item class="aside-menu-item" index="/road">
+            <el-icon><Guide /></el-icon>
+            <span>道 路</span>
+          </el-menu-item>
           <el-menu-item v-if="user.role == 1" class="aside-menu-item" index="/user">
             <el-icon><User /></el-icon>
             <span>用 户</span>
