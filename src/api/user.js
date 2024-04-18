@@ -39,6 +39,19 @@ export function getUserList() {
 }
 
 /**
+ * 获取指定用户的信息
+ * @param {String} uid 用户的唯一标识符
+ * @returns 返回一个Promise对象，成功时携带获取到的用户信息
+ */
+export function getUser(uid) {
+  // 发起GET请求获取指定用户信息
+  return request({
+    url: '/api/user/' + uid,
+    method: 'get'
+  })
+}
+
+/**
  * 创建用户
  * @returns {Promise} 返回一个Promise对象，成功时携带创建的用户信息，失败时携带错误信息
  */
