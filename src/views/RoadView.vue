@@ -74,7 +74,7 @@
           autocomplete="off"
         />
       </el-form-item>
-      <el-form-item label="所属区域">
+      <el-form-item label="所属区域" style="display: none;">
         <el-select v-model="updateRoadForm.region_id" placeholder="请选择所属区域" filterable>
           <el-option
             v-for="item in regionList"
