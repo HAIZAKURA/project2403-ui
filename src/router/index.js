@@ -3,6 +3,11 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import UserView from '@/views/UserView.vue'
 import RoadView from '@/views/RoadView.vue'
+import BoxView from '@/views/BoxView.vue'
+import RegionView from '@/views/RegionView.vue'
+import LogView from '@/views/LogView.vue'
+import AlertView from '@/views/AlertView.vue'
+import DashView from '@/views/DashView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,14 +18,39 @@ const router = createRouter({
       component: HomeView,
       children: [
         {
-          path: '/user',
-          name: 'user',
-          component: UserView
+          path: '/',
+          name: 'dash',
+          component: DashView
+        },
+        {
+          path: '/box',
+          name: 'box',
+          component: BoxView
+        },
+        {
+          path: '/log',
+          name: 'log',
+          component: LogView
+        },
+        {
+          path: '/alert',
+          name: 'alert',
+          component: AlertView
         },
         {
           path: '/road',
           name: 'road',
           component: RoadView
+        },
+        {
+          path: '/region',
+          name: 'region',
+          component: RegionView
+        },
+        {
+          path: '/user',
+          name: 'user',
+          component: UserView
         }
       ]
     },
