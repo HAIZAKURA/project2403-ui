@@ -19,9 +19,25 @@
             <el-icon><Odometer /></el-icon>
             <span>首 页</span>
           </el-menu-item>
+          <el-menu-item class="aside-menu-item" index="/box">
+            <el-icon><Coordinate /></el-icon>
+            <span>设 备</span>
+          </el-menu-item>
+          <el-menu-item class="aside-menu-item" index="/log">
+            <el-icon><MessageBox /></el-icon>
+            <span>日 志</span>
+          </el-menu-item>
+          <el-menu-item class="aside-menu-item" index="/alert">
+            <el-icon><Notification /></el-icon>
+            <span>警 报</span>
+          </el-menu-item>
           <el-menu-item class="aside-menu-item" index="/road">
             <el-icon><Guide /></el-icon>
             <span>道 路</span>
+          </el-menu-item>
+          <el-menu-item v-if="user.role == 1" class="aside-menu-item" index="/region">
+            <el-icon><Place /></el-icon>
+            <span>区 域</span>
           </el-menu-item>
           <el-menu-item v-if="user.role == 1" class="aside-menu-item" index="/user">
             <el-icon><User /></el-icon>
@@ -36,15 +52,17 @@
         <el-main class="main-view">
           <RouterView />
         </el-main>
-        <el-footer height="2em" class="footer">
+        <!-- <el-footer height="2em" class="footer">
           <span class="footer-text">Footer</span>
-        </el-footer>
+        </el-footer> -->
       </el-container>
     </el-container>
     <div class="header-menu">
       <div class="header-menu-item">
         <span class="header-menu-item-user">{{ user.username }}</span>
-        <el-button class="header-menu-item-button" @click="myDialogVisible = true" circle><el-icon><Key /></el-icon></el-button>
+        <el-button class="header-menu-item-button" @click="myDialogVisible = true" circle
+          ><el-icon><Key /></el-icon
+        ></el-button>
         <el-button class="header-menu-item-button" type="danger" @click="onLogout">登出</el-button>
       </div>
     </div>
@@ -63,7 +81,6 @@
       </el-form-item>
     </el-form>
   </el-dialog>
-
 </template>
 
 <script setup>
@@ -83,15 +100,15 @@ const renewPassForm = reactive({
 const user = reactive({
   uid: localStorage.getItem('uid'),
   role: localStorage.getItem('role'),
-  username: localStorage.getItem('username'),
+  username: localStorage.getItem('username')
 })
 
 const router = useRouter()
 
 router.beforeEach((to, from, next) => {
   sessionStorage.setItem('activePath', to.path)
-  next();
-});
+  next()
+})
 
 const activePath = computed(() => {
   return sessionStorage.getItem('activePath') || '/'
@@ -115,11 +132,13 @@ const onRenewPass = () => {
   console.log(user.uid, renewPassForm)
   renewPass(user.uid, renewPassForm) // 提交密码重置请求
     .then((res) => {
-      if (res.data.code == 200) { // 密码重置成功
+      if (res.data.code == 200) {
+        // 密码重置成功
         ElMessage.success('密码重置成功')
         localStorage.clear() // 清除本地存储
         router.push('/login') // 重定向到登录页
-      } else { // 密码重置失败
+      } else {
+        // 密码重置失败
         ElMessage.error('密码重置失败')
       }
     })
@@ -145,16 +164,19 @@ const onMyDialogClose = () => {
 const refreshJWT = () => {
   refreshToken() // 请求新的JWT Token
     .then((res) => {
-      if (res.data.code == 200) { // Token刷新成功
+      if (res.data.code == 200) {
+        // Token刷新成功
         localStorage.setItem('uid', res.data.data.uid) // 存储用户ID
         localStorage.setItem('role', res.data.data.role) // 存储用户角色
         localStorage.setItem('username', res.data.data.username) // 存储用户名
         localStorage.setItem('token', res.data.token) // 存储Token
-      } else if (res.data.code == 401) { // 用户未登录
+      } else if (res.data.code == 401) {
+        // 用户未登录
         ElMessage.error('用户未登录')
         localStorage.clear() // 清除本地存储
         router.push('/login') // 重定向到登录页
-      } else { // 未知错误
+      } else {
+        // 未知错误
         ElMessage.error('未知错误')
         localStorage.clear() // 清除本地存储
         router.push('/login') // 重定向到登录页
