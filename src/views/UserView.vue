@@ -140,7 +140,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getUserList, createUser, deleteUser, recoverUser, getUser } from '@/api/user'
 import { deleteUserRegion, addUserRegion } from '@/api/user_region'
-import { getRegionList } from '@/api/region'
+import { getAllRegion } from '@/api/region'
 
 const tableData = ref([])
 const filteredData = ref([])
@@ -353,7 +353,7 @@ const onDeleteUserRegion = (uid, region_id) => {
  */
 const getRegionListData = () => {
   // 请求地区列表数据
-  getRegionList()
+  getAllRegion()
     .then((res) => {
       // 请求成功后，根据返回码更新地区列表
       if (res.data.code === 200) {
