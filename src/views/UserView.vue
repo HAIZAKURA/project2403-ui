@@ -92,7 +92,7 @@
   </div>
 
   <el-dialog v-model="userDialogVisible" :title="userInfo.username" width="40%">
-    <el-table :data="userInfo.users_region" height="200" border stripe>
+    <el-table :data="userInfo.Regions" height="200" border stripe>
       <el-table-column prop="region_id" label="区域ID" width="80" />
       <el-table-column prop="region_name" label="区域名称" />
       <el-table-column label="操作" width="80">
