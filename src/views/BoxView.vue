@@ -294,7 +294,7 @@ const getRegionListByUser = () => {
     .then((res) => {
       if (res.data.code == 200) {
         // 成功获取信息，更新regionList
-        regionList.value = res.data.data.users_region
+        regionList.value = res.data.data.Regions
       } else {
         // 获取信息失败时，显示错误消息
         ElMessage.error('获取用户信息失败')
@@ -319,7 +319,7 @@ const getRegionList2ByUser = () => {
     .then((res) => {
       if (res.data.code == 200) {
         // 成功获取信息，更新regionList2
-        regionList2.value = res.data.data.users_region
+        regionList2.value = res.data.data.Regions
       } else {
         // 获取信息失败时，显示错误消息
         ElMessage.error('获取用户信息失败')
