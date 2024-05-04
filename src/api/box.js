@@ -89,3 +89,11 @@ export function setBox(box_id, DTO) {
         data: DTO // 将DTO对象作为请求的数据体发送
     })
 }
+
+export function addBox(DTO) {
+    return request({
+        url: '/api/box/',
+        method: 'post',
+        data: DTO
+    })
+}
