@@ -90,7 +90,13 @@ export function setBox(box_id, DTO) {
     })
 }
 
+/**
+ * 向服务器添加一个新的Box实体
+ * @param {Object} DTO - 数据传输对象，包含新建Box实体的信息
+ * @returns {Promise} 返回一个Promise对象，用于处理请求的结果
+ */
 export function addBox(DTO) {
+    // 发起POST请求，向'/api/box/'接口发送DTO数据
     return request({
         url: '/api/box/',
         method: 'post',
