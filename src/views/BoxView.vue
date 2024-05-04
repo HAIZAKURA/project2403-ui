@@ -707,17 +707,32 @@ const handleDeleteBox = (box_id) => {
     })
 }
 
+/**
+ * 处理添加按钮点击事件
+ * 该函数不接受参数且无返回值
+ * 主要逻辑包括：
+ * 1. 检查是否已选择区域和道路，若未选择，则显示错误消息；
+ * 2. 若已选择，打开添加对话框并设置相关表单字段。
+ */
 const handleAddClick = () => {
+  // 检查区域和道路是否都已选择，若未选择，则显示错误消息
   if (selectRoadID.value == '' || selectRoadID.value == undefined || selectRegionID.value == '' || selectRegionID.value == undefined) {
     ElMessage.error('请先选择区域和道路')
   } else {
+    // 已选择区域和道路，打开添加对话框并赋值相关表单字段
     addDialogVisible.value = true
     addBoxForm.region_id = selectRegionID.value
     addBoxForm.road_id = selectRoadID.value
   }
 }
 
+/**
+ * 重置 addBoxForm 表单数据和关闭对话框
+ * 无参数
+ * 无返回值
+ */
 const beforeAddBoxClose = () => {
+  // 重置表单数据
   addBoxForm.box_id = ''
   addBoxForm.leakage_id = ''
   addBoxForm.light_id = ''
@@ -725,22 +740,31 @@ const beforeAddBoxClose = () => {
   addBoxForm.latitude = ''
   addBoxForm.region_id = ''
   addBoxForm.road_id = ''
+  
+  // 关闭对话框
   addDialogVisible.value = false
 }
 
+/**
+ * 点击添加框时的事件处理函数。
+ * 无参数。
+ * 无显式返回值，但会通过调用其他函数影响应用状态。
+ */
 const onAddBox = () => {
+  // 调用 addBox 函数，并处理其 Promise
   addBox(addBoxForm)
     .then((res) => {
+      // 请求成功后，根据返回的 code 判断添加操作是否成功
       if (res.data.code == 200) {
-        ElMessage.success('添加成功')
-        beforeAddBoxClose()
-        handleSelectRoad()
+        ElMessage.success('添加成功') // 添加成功的提示信息
+        beforeAddBoxClose() // 关闭前的准备动作
+        handleSelectRoad() // 重新选择道路的操作
       } else {
-        ElMessage.error('添加失败')
+        ElMessage.error('添加失败') // 添加失败的提示信息
       }
     })
     .catch((err) => {
-      ElMessage.error('Error:', err)
+      ElMessage.error('Error:', err) // 处理请求失败的情况
     })
 }
 </script>
