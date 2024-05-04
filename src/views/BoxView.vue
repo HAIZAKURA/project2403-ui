@@ -9,7 +9,7 @@
     <el-row :gutter="20">
       <el-col :span="14">
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="11">
             <el-select
               v-model="selectRegionID"
               placeholder="请选择区域"
@@ -25,7 +25,7 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="11">
             <el-select
               v-model="selectRoadID"
               placeholder="请选择道路"
@@ -40,6 +40,9 @@
                 :value="item.road_id"
               />
             </el-select>
+          </el-col>
+          <el-col :span="2">
+            <el-button type="primary" :icon="Plus" circle @click="handleAddClick" />
           </el-col>
         </el-row>
         <div class="blank1"></div>
@@ -176,6 +179,29 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+
+  <el-dialog v-model="addDialogVisible" title="添加云盒" width="30%" :before-close="beforeAddBoxClose">
+    <el-form :model="addBoxForm" label-width="auto" label-position="left">
+      <el-form-item label="云盒ID">
+        <el-input v-model="addBoxForm.box_id" placeholder="请输入云盒ID" />
+      </el-form-item>
+      <el-form-item label="漏保ID">
+        <el-input v-model="addBoxForm.leakage_id" placeholder="请输入漏保ID" />
+      </el-form-item>
+      <el-form-item label="灯名称">
+        <el-input v-model="addBoxForm.light_id" placeholder="请输入灯名称" />
+      </el-form-item>
+      <el-form-item label="经度">
+        <el-input v-model="addBoxForm.longitude" placeholder="请输入经度" />
+      </el-form-item>
+      <el-form-item label="纬度">
+        <el-input v-model="addBoxForm.latitude" placeholder="请输入纬度" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onAddBox">添加</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -183,6 +209,7 @@ import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import { ElMessage } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 import { getUser } from '@/api/user'
 import { getRoadListByRegion } from '@/api/road'
 import {
@@ -191,7 +218,8 @@ import {
   getBox,
   deleteBox,
   updateBox,
-  setBox
+  setBox,
+  addBox
 } from '@/api/box'
 
 const router = useRouter()
@@ -234,9 +262,20 @@ const boxTime = reactive({
   s4_b: ''
 })
 
+const addBoxForm = reactive({
+  box_id: '',
+  leakage_id: '',
+  light_id: '',
+  longitude: '',
+  latitude: '',
+  region_id: '',
+  road_id: ''
+})
+
 const boxDialogVisible = ref(false)
 const timeDialogVisible = ref(false)
 const boxTimeLoading = ref(false)
+const addDialogVisible = ref(false)
 
 window._AMapSecurityConfig = {
   securityJsCode: import.meta.env.VITE_AMAP_CODE
@@ -664,6 +703,43 @@ const handleDeleteBox = (box_id) => {
     })
     .catch((err) => {
       // 捕获并处理请求过程中的错误
+      ElMessage.error('Error:', err)
+    })
+}
+
+const handleAddClick = () => {
+  if (selectRoadID.value == '' || selectRoadID.value == undefined || selectRegionID.value == '' || selectRegionID.value == undefined) {
+    ElMessage.error('请先选择区域和道路')
+  } else {
+    addDialogVisible.value = true
+    addBoxForm.region_id = selectRegionID.value
+    addBoxForm.road_id = selectRoadID.value
+  }
+}
+
+const beforeAddBoxClose = () => {
+  addBoxForm.box_id = ''
+  addBoxForm.leakage_id = ''
+  addBoxForm.light_id = ''
+  addBoxForm.longitude = ''
+  addBoxForm.latitude = ''
+  addBoxForm.region_id = ''
+  addBoxForm.road_id = ''
+  addDialogVisible.value = false
+}
+
+const onAddBox = () => {
+  addBox(addBoxForm)
+    .then((res) => {
+      if (res.data.code == 200) {
+        ElMessage.success('添加成功')
+        beforeAddBoxClose()
+        handleSelectRoad()
+      } else {
+        ElMessage.error('添加失败')
+      }
+    })
+    .catch((err) => {
       ElMessage.error('Error:', err)
     })
 }
